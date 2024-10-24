@@ -1,7 +1,7 @@
 global function MSLAInit {
     global logI to -1.
     local trackTime to round(missionTime, 2).
-    startAnimation().
+    // startAnimation().
     print("Logging Algorithm Initialisation").
     MSLALogMessage("System Initialisation").
     print("Event file initialized.").

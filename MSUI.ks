@@ -1,11 +1,12 @@
 global function MSUIInit{
-    startAnimation().
+    // startAnimation().
     UI("SYSTEM READY", "", "", "").
     wait 2.
 }
 
 local function METClock{ //borrowed from u/Farsyte 
-    local s to floor(missiontime).
+    parameter mT.
+    local s to floor(mT).
     local m to floor(s/60). set s to mod(s, 60).
     local h to floor(m/60). set m to mod(m, 60).
     local d to floor(h/24). set h to mod(h, 24).
@@ -24,7 +25,9 @@ global function UI{
     print("| Your vehicle is guided to circular orbit|").
     print("|_________________________________________|").
     print(" Running on : ") + ship:name.
-    print(" MET : ") + METClock().
+    print(" MET : ") + METClock(missiontime).
+    print(" CSMET : ") + METClock(missiontime - startT). //shows the time elapsed since last CPU reboot.
+    print(" Status : " + status).
     print("                                           ").
     print("                  AVIONICS :").
     print("                                           ").
