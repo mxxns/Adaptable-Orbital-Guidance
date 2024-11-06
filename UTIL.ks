@@ -6,8 +6,8 @@ local antennaD to false.
 local fairingD to false.
 local solarD to false.
 if stage:number = 0 {
-	local stageable to false.}
-else local stageable to true.
+	global stageable to false.}
+else global stageable to true.
 local boostersJettisoned to false.
 global maneuvering to true.
 
@@ -151,7 +151,7 @@ global function NodeRemoveAll {
 global function rebootInterruptionRoutine{
 	if status = "FLYING" {
 		MSLALogMessage("/!\ MISSION COMPROMISED : CPU reboot during ascent phase. Attempt to save the mission").
-		Ascent().
+		AscentBurn().
 	}
 	if status = "SUB_ORBITAL" {
 		MSLALogMessage("/!\ MISSION COMPROMISED : CPU reboot during circularisation phase. Attempt to save the mission").

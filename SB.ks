@@ -6,7 +6,6 @@ local function lngOffset{
     parameter LandCoord.
 
     local X to 10*10*tan((constant:pi/180)*vAng(-up:vector, velocityAt(ship, addons:tr:timetillimpact):surface)).
-    clearscreen. print X.
     return (180/constant:pi)*(X/(body:radius*cos(constant:pi*LandCoord:lat/180))).
 }
 

@@ -18,7 +18,20 @@ local function boostBackSteering {
     if vAng(prograde:vector, LandCoord:position) < 90 {
         return R(-BBPid:update(time:seconds, latBBError), 0, 0).
     }
-    else return R(BBPid:update(time:seconds, latBBError), 0, 0).
+    else return R(-BBPid:update(time:seconds, latBBError), 0, 0).
+}
+
+local function lngOvershootDetection {
+    parameter LandCoord. parameter dir.
+
+    if dir {
+        if addons:tr:impactpos:lng > LandCoord:lng return false.
+        else return true.
+    }
+    else{
+        if addons:tr:impactpos:lng < LandCoord:lng return false.
+        else return true.
+    }
 }
 
 global function boostBack {
@@ -42,14 +55,19 @@ global function boostBack {
     local hav to haversine(LandCoord:lat, addons:tr:impactpos:lat, LandCoord:lng, addons:tr:impactpos:lng).
     local havMin to hav.
     local BrC to false.
-    if addons:tr:available and addons:tr:hasimpact until BrC {
-        set LandOffset to offsetCoord(LandCoord).
-        set STR to retroBBV + boostBackSteering(LandOffset).
-        if hav <= havMin set havMin to hav.
-        else if hav > havMin and havMin < 300 set BrC to true.
-        set hav to haversine(LandOffset:lat, addons:tr:impactpos:lat, LandOffset:lng, addons:tr:impactpos:lng).
-        set THR to (1/10000)*hav.
-        wait 0.1.
-    }
+    if addons:tr:available and addons:tr:hasimpact {
+        if addons:tr:impactpos:lng < LandCoord:lng local lngOvershootDirection to false.
+        else local lngOvershootDirection to true.  //True means impact:pos:lng > LandCoord:lng
+    
+        until BrC or lngOvershootDetection() {
+            set LandOffset to offsetCoord(LandCoord).
+            set STR to retroBBV + boostBackSteering(LandOffset).
+            if hav <= havMin set havMin to hav.
+            else if hav > havMin and havMin < 300 set BrC to true.
+            set hav to haversine(LandOffset:lat, addons:tr:impactpos:lat, LandOffset:lng, addons:tr:impactpos:lng).
+            set THR to (1/10000)*hav.
+            wait 0.1.
+        }
+    }      
     set THR to 0.
 }

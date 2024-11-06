@@ -1,14 +1,11 @@
 //To set
-local DOApKM to 75. //km, Desired orbit altitude in kilometers(apoapsis in fact but its circular so Pe~=Ap)
+global DOApKM to 75. //km, Desired orbit altitude in kilometers(apoapsis in fact but its circular so Pe~=Ap)
 local OINCL to 0. //degrees, Desired orbit inclination in degrees
 local LiftOffAngle to 86. //degrees, Tune-in for more/less brutal launch, before gravity turn initiation. Works with Reach45At.
 local Reach45At to 18. //km, Reach a pitch of 45° at <insert desired altitude> (agressivity of your gravity turn)
-global lowerStage to false. //To differentiate who goes to orbit and who doesn't
 
 //Not to set
 global startT to missiontime.
-
-
 
 //Mathematical functions
 local function evalTHRAP { //Used to cut the throttle when apoapsis gets closer to desired apoapsis
@@ -30,7 +27,7 @@ global function Launch { //Initialisation and launch. As the name suggests
 		MSLAInit().
 		//MSUIInit().
 
-		preLaunchRoutine().
+		// preLaunchRoutine().
 
 		UI("Liftoff!", "", "", "").
 		MSLALogMessage("Liftoff").
@@ -39,7 +36,7 @@ global function Launch { //Initialisation and launch. As the name suggests
 		
 		boosterJettisonInterruptRoutine().
 		stagingInterruptionRoutine().
-		utilitiesRoutine().
+		// utilitiesRoutine().
 
 		Ascent().
 	}
@@ -64,7 +61,7 @@ local function AscentBurn{ //There's probably a more efficient way to do it, by 
 	set THR to 0.
 }
 
-local function AscentKeep {
+global function AscentKeep {
 	local altPID to pidLoop(0.01, 5, 0, 0, 0.2).
 	set altPID:setpoint to DOApKM*1000.
 	until altitude >= body:atm:height { //keeps the apoapsis at desired altitude if the burn ended while still in atmosphere
@@ -87,8 +84,6 @@ local function Ascent { //Gravity turn ascent function
 	MSLALogMessage("Gravity turn begins").
 
 	AscentBurn(1000).
-
-	if not lowerStage AscentKeep().
 	
 	set THR to 0.
 }
@@ -102,7 +97,7 @@ local function targetCircularOrbitSpeed{
 	return sqrt(body:mu/(body:radius+DOApKM*1000)).
 }
 
-local function Circularisation{
+global function Circularisation{
 	local dV to targetCircularOrbitSpeed()-OrbSpeedforAnyAltitude(apoapsis).
 	MSLALogMessage("Executing burn maneuver").
 	local CircNode to NODE(time:seconds + eta:apoapsis, 0, 0, dV).
