@@ -2,7 +2,7 @@ CORE:PART:GETMODULE("kOSProcessor"):DOEVENT("Open Terminal").
 print("Lowerstage online").
 
 if status = "PRELAUNCH" {
-copypath("0:/lowerstage.ks", "").
+copypath("0:/mission/lowerstage.ks", "").
 copypath("0:/CORB.ks", "").
 copypath("0:/BB.ks", "").
 copypath("0:/SB.ks", "").

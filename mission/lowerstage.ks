@@ -6,13 +6,12 @@ runpath("SB.ks").
 runpath("BB.ks").
 
 set core:bootfilename to "lowerstage.ks".
-
 preLaunchRoutine().
+utilitiesRoutine().
 
 if status = "PRELAUNCH" {
     Launch().
-    clearscreen.
-    stage. rcs on.
+    stage.
     local tZ to time:seconds.
     until time:seconds >= tZ + 4 { 
         if time:seconds < tZ + 2 set ship:control:starboard to -1.

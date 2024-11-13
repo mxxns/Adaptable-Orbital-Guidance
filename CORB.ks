@@ -35,7 +35,7 @@ global function Launch { //Initialisation and launch. As the name suggests
 		stage. set THR to 1.
 		
 		boosterJettisonInterruptRoutine().
-		stagingInterruptionRoutine().
+		// stagingInterruptionRoutine().
 		// utilitiesRoutine().
 
 		Ascent().
@@ -69,7 +69,7 @@ global function AscentKeep {
 		set STR to prograde.
 		set THR to altPID:update(time:seconds, apoapsis).
 		UI("Waiting atmospheric exit", "", "Angle : ", round(90-vAng(up:vector, prograde:vector), 1)).
-		wait 0.1.
+		wait 0.1. 
 	}
 }
 

@@ -3,7 +3,7 @@ global KSCLaunchPad is LATLNG(-0.0972098829757138, -74.557676687929).
 
 
 local antennaD to false.
-local fairingD to false.
+global fairingD to false.
 local solarD to false.
 if stage:number = 0 {
 	global stageable to false.}
@@ -128,6 +128,11 @@ local function gearDeploy {
 	else gear off.
 }
 
+local function rcsAcc {
+	if alt:radar > 0.60*body:atm:height rcs on.
+	else rcs off.
+}
+
 global function utilitiesRoutine{
 	when 1=1 then {
 		if not fairingD {fairingDeploy().}
@@ -135,6 +140,7 @@ global function utilitiesRoutine{
 			antennaDeploy().
 			solarDeploy().
 			gearDeploy().
+			rcsAcc().
 		}
 		preserve.
 	}

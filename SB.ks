@@ -2,20 +2,6 @@ local SBSI to false.
 global retroSBV to srfRetrograde.
 global pidMinBound to -45. global pidMaxBound to 45. global pidSBK to 1000.
 
-local function lngOffset{
-    parameter LandCoord.
-
-    local X to 10*10*tan((constant:pi/180)*vAng(-up:vector, velocityAt(ship, addons:tr:timetillimpact):surface)).
-    return (180/constant:pi)*(X/(body:radius*cos(constant:pi*LandCoord:lat/180))).
-}
-
-global function offsetCoord{
-    parameter LandCoord.
-
-    if addons:tr:available return latlng(LandCoord:lat, LandCoord:lng - lngOffset(LandCoord)).
-    else return latlng(LandCoord:lat, LandCoord:lng).
-}
-
 local function suicideBurnSteerInit {
     parameter LandCoord.
 
@@ -44,9 +30,9 @@ local function freefallSuicideBurnSteering{
     parameter LandCoord.
     set retroSBV to srfRetrograde.
     if addons:tr:available and addons:tr:hasimpact {
-        set pidSBK to 2000. set pidMaxBound to 45. set pidMinBound to -45. set SBSI to false.
+        set pidSBK to 1000. set pidMaxBound to 45. set pidMinBound to -45. set SBSI to false.
         SBDataUpdate(LandCoord).
-        if velocity:surface:mag < 5 return up:vector.
+        if alt:radar < 10 return up:vector.
         else return retroSBV + R(STRPitchPid:update(time:seconds, -latError), STRYawPid:update(time:seconds, -lngError), 0).
     }
     else{
@@ -59,7 +45,7 @@ global function suicideBurnSteering { //Steers the rocket during the suicide bur
     parameter LandCoord.
     set retroSBV to srfRetrograde.
     if addons:tr:available and addons:tr:hasimpact { 
-        set pidSBK to 3000. set pidMaxBound to 20. set pidMinBound to -20. set SBSI to false.
+        set pidSBK to 2000. set pidMaxBound to 20. set pidMinBound to -20. set SBSI to false.
         SBDataUpdate(LandCoord).
         if velocity:surface:mag < 5 return up:vector.
         else return retroSBV + R(STRPitchPid:update(time:seconds, latError), STRYawPid:update(time:seconds, lngError), 0).
@@ -72,22 +58,19 @@ global function suicideBurnSteering { //Steers the rocket during the suicide bur
 
 global function suicideBurn {
     parameter LandCoord.
-    local LandOffset to offsetCoord(LandCoord).
 
     local DLandingSpeed to -0.5.
-
-    local THRPid to pidLoop(0.1, 0.01, 0, 0, 1).
+    local THRPid to pidLoop(0.134, 0, 0, 0, 1).
     set THRPid:setpoint to DLandingSpeed.
     local sBurnT to 0. local distSB to 0. local BND to ship:bounds.
 
     until status = "LANDED" {
-        set LandOffset to offsetCoord(LandCoord).
         set sBurnT to -(DLandingSpeed - velocity:surface:mag)/(-g()+maxThrust/mass).
         set distSB to 0.5*(velocity:surface:mag - DLandingSpeed)*sBurnT.
         set THRPid:setpoint to -2*(bnd:bottomaltradar-distSB)/addons:tr:timetillimpact + DLandingSpeed.
         set THR to THRPid:update(time:seconds, verticalspeed).
-        if THR >= 0.51 set STR to suicideBurnSteering(LandOffset).
-        else set STR to freefallSuicideBurnSteering(LandOffset).
+        if THR >= 0.31 set STR to suicideBurnSteering(LandCoord).
+        else set STR to freefallSuicideBurnSteering(LandCoord).
         wait 0.1.
     }
     set THR to 0.
