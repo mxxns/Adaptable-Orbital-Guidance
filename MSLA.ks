@@ -1,5 +1,5 @@
 global function MSLAInit {
-    global logI to -1.
+    global logI to true.
     local trackTime to round(missionTime, 2).
     // startAnimation().
     print("Logging Algorithm Initialisation").
@@ -8,7 +8,7 @@ global function MSLAInit {
     log "MET; ALT; LAT; LONG; VELOCITY; ACC; MASS;" to "0:/Logs/mission " + ship:name + "/data.csv".
     print("CSV Data Format : MET; ALT; LAT; LONG; VELOCITY; ACC; MASS;").
     print("Starting to log in csv file").
-    when logI < 0 and round(missionTime, 2) - trackTime > 0.1 then {
+    when logI and round(missionTime, 2) - trackTime > 0.1 then {
         MSLACSVNode().
         set trackTime to round(missionTime, 2).
         preserve.

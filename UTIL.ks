@@ -1,12 +1,9 @@
 global KSCLaunchPad is LATLNG(-0.0972098829757138, -74.557676687929).
 
-
-
 local antennaD to false.
 global fairingD to false.
 local solarD to false.
-if stage:number = 0 {
-	global stageable to false.}
+if stage:number = 0 global stageable to false.
 else global stageable to true.
 local boostersJettisoned to false.
 global maneuvering to true.
@@ -25,7 +22,7 @@ local function findBoosters{ //Finds which engine on the craft are boosters
 		}
 	}
 	return booster.
-}
+} 
 
 global function reusableBoosterSeparation {
 	return "To be written".
@@ -36,7 +33,7 @@ global function boosterJettisonInterruptRoutine{ //Activates when the boosters a
 		when booster:flameout then {
 			if not boostersJettisoned { //This variable is changed when they'll be jettisoned, so the CPU doesn't stage for no reason
 				UI("Boosters jettison", "", "", "").
-				MSLALogMessage("Boosters jettison").
+				if DWL MSLALogMessage("Boosters jettison").
 				stage.
 			}
 			set boostersJettisoned to true.
@@ -48,7 +45,7 @@ global function boosterJettisonInterruptRoutine{ //Activates when the boosters a
 global function stagingInterruptionRoutine{ //Activates when the whole stage is to be thrown
 	when STAGE:DELTAV:VACUUM <= 0 and stageable then {
 		UI("Staging", "", "", "").
-		MSLALogMessage("Staging").
+		if DWL MSLALogMessage("Staging").
 
 		//Saving throttle state right before staging and stopping throttle
 		local sTHR to THROTTLE.
@@ -156,22 +153,22 @@ global function NodeRemoveAll {
 
 global function rebootInterruptionRoutine{
 	if status = "FLYING" {
-		MSLALogMessage("/!\ MISSION COMPROMISED : CPU reboot during ascent phase. Attempt to save the mission").
+		if DWL MSLALogMessage("/!\ MISSION COMPROMISED : CPU reboot during ascent phase. Attempt to save the mission").
 		AscentBurn().
 	}
 	if status = "SUB_ORBITAL" {
-		MSLALogMessage("/!\ MISSION COMPROMISED : CPU reboot during circularisation phase. Attempt to save the mission").
+		if DWL MSLALogMessage("/!\ MISSION COMPROMISED : CPU reboot during circularisation phase. Attempt to save the mission").
 		NodeRemoveAll().
 		Circularisation().
 	}
 	if status = "ESCAPING" { //Escaping orbit means you are in a transfer to another body and/or simply leaving Earth's SOI
-		MSLALogMessage("/!\ CPU Reboot during escape phase. Mission may be compromised.").
+		if DWL MSLALogMessage("/!\ CPU Reboot during escape phase. Mission may be compromised.").
 		Idle().
 	}
 
 	else {
-		MSLALogMessage("CPU reboot during vessel status : landed, splashed, orbiting or docked. ").
-		if hasnode {MSLALogMessage("/!\ Vehicle had nodes active after a reboot, may have compromised mission.").}
+		if DWL MSLALogMessage("CPU reboot during vessel status : landed, splashed, orbiting or docked. ").
+		if hasnode {if DWL MSLALogMessage("/!\ Vehicle had nodes active after a reboot, may have compromised mission.").}
 		Idle().
 	}
 }

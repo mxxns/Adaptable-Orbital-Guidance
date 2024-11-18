@@ -1,4 +1,4 @@
-local function haversine {
+local function haversine { //apparently kOS uses degrees not rads but it works with rads so i don't want to correct it
     parameter latD1, latD2, lngD1, lngD2.
     local latR1 to latD1*(constant:pi/180).
     local latR2 to latD2*(constant:pi/180).
@@ -7,17 +7,20 @@ local function haversine {
     return 2*body:radius*arcsin(sqrt(0.5*(1-cos(latR2-latR1)+cos(latR1)*cos(latR2)*(1-cos(lngR2-lngR1))))).
 }
 
-local BBPid to pidLoop(100, 1, 0, -10, 10).
+local BBPid to pidLoop(100, 0, 0, -10, 10).
 set BBPid:setpoint to 0.
 local latBBError to 0.
 
 local function boostBackSteering {
     parameter LandCoord.
+    set latBBError to addons:tr:impactpos:lat - LandCoord:lat.
+    return -R(BBPid:update(time:seconds, latBBError), 0, 0).
+}
+
+local function backupboostBackSteering {
+    parameter LandCoord.
     set latBBError to LandCoord:lat - addons:tr:impactpos:lat.
-    if vAng(prograde:vector, LandCoord:position) < 90 {
-        return R(-BBPid:update(time:seconds, latBBError), 0, 0).
-    }
-    else return R(-BBPid:update(time:seconds, latBBError), 0, 0).//touche plus
+    return -heading(0, 90):forevector*BBPid:update(time:seconds, latBBError). //North*pid(latBBError)
 }
 
 local function lngOvershootDetection {

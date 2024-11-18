@@ -8,9 +8,10 @@ runpath("BB.ks").
 set core:bootfilename to "lowerstage.ks".
 preLaunchRoutine().
 utilitiesRoutine().
+set fairingD to true.
 
 if status = "PRELAUNCH" {
-    Launch().
+    Launch(false, false, false).
     stage.
     local tZ to time:seconds.
     until time:seconds >= tZ + 4 { 
@@ -22,7 +23,7 @@ if status = "PRELAUNCH" {
 }
 
 set ship:control:fore to 0.
-
+kuniverse:forcesetactivevessel(ship).
 boostBack(KSCLaunchPad).
 brakes on.
 suicideBurn(KSCLaunchPad).

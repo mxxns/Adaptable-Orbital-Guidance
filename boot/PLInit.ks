@@ -7,8 +7,8 @@ copypath("0:/MSUI.ks", "").
 
 local partList to ship:parts.
 
-wait until ship:parts:length < partList:length-2.
 set core:bootfilename to "payload.ks".
+wait until ship:parts:length < (partList:length-4) and altitude > body:atm:height*0.5.
 print ("Lowerstage separation").
 
 run payload.

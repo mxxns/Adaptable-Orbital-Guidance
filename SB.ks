@@ -5,10 +5,10 @@ global pidMinBound to -45. global pidMaxBound to 45. global pidSBK to 1000.
 local function suicideBurnSteerInit {
     parameter LandCoord.
 
-    global STRPitchPid to pidLoop(pidSBK, 0.01, 0, pidMinBound, pidMaxBound).
+    global STRPitchPid to pidLoop(pidSBK, 5, 10, pidMinBound, pidMaxBound).
     set STRPitchPid:setpoint to 0.
 
-    global STRYawPid to pidLoop(pidSBK, 0.01, 0, pidMinBound, pidMaxBound).
+    global STRYawPid to pidLoop(pidSBK, 5, 10, pidMinBound, pidMaxBound).
     set STRYawPid:setpoint to 0.
 
     global lngError to LandCoord:lng-addons:tr:impactpos:lng.
@@ -30,13 +30,13 @@ local function freefallSuicideBurnSteering{
     parameter LandCoord.
     set retroSBV to srfRetrograde.
     if addons:tr:available and addons:tr:hasimpact {
-        set pidSBK to 1000. set pidMaxBound to 45. set pidMinBound to -45. set SBSI to false.
+        set pidSBK to 3000. set pidMaxBound to 45. set pidMinBound to -45. set SBSI to false.
         SBDataUpdate(LandCoord).
         if alt:radar < 10 return up:vector.
         else return retroSBV + R(STRPitchPid:update(time:seconds, -latError), STRYawPid:update(time:seconds, -lngError), 0).
     }
     else{
-        // MSLALogMission("Trajectories unavailable.").
+        if DWL MSLALogMission("Trajectories unavailable.").
         return retroSBV.
     }
 }
@@ -45,13 +45,13 @@ global function suicideBurnSteering { //Steers the rocket during the suicide bur
     parameter LandCoord.
     set retroSBV to srfRetrograde.
     if addons:tr:available and addons:tr:hasimpact { 
-        set pidSBK to 2000. set pidMaxBound to 20. set pidMinBound to -20. set SBSI to false.
+        set pidSBK to 4000. set pidMaxBound to 30. set pidMinBound to -30. set SBSI to false.
         SBDataUpdate(LandCoord).
         if velocity:surface:mag < 5 return up:vector.
         else return retroSBV + R(STRPitchPid:update(time:seconds, latError), STRYawPid:update(time:seconds, lngError), 0).
     }
     else{
-        // MSLALogMission("Trajectories unavailable.").
+        if DWL MSLALogMission("Trajectories unavailable.").
         return retroSBV.
     }
 }
@@ -69,8 +69,14 @@ global function suicideBurn {
         set distSB to 0.5*(velocity:surface:mag - DLandingSpeed)*sBurnT.
         set THRPid:setpoint to -2*(bnd:bottomaltradar-distSB)/addons:tr:timetillimpact + DLandingSpeed.
         set THR to THRPid:update(time:seconds, verticalspeed).
-        if THR >= 0.31 set STR to suicideBurnSteering(LandCoord).
-        else set STR to freefallSuicideBurnSteering(LandCoord).
+        if alt:radar > 5000 {
+            if THR >= 0.81 set STR to suicideBurnSteering(LandCoord).
+            else set STR to freefallSuicideBurnSteering(LandCoord).
+        }
+        else {
+            if THR >= 0.51 set STR to suicideBurnSteering(LandCoord).
+            else set STR to freefallSuicideBurnSteering(LandCoord).
+        }
         wait 0.1.
     }
     set THR to 0.
