@@ -89,18 +89,31 @@ global function antennaDeploy{ //inspired by space_is_hard 's work (github)
 }
 
 global function fairingDeploy {
-	if not fairingD {
-		//Finding fairing
-		if altitude > 0.95*body:atm:height {
-			// local fairList to list().
-			// for fair in ship:modulesnamed("ModuleProceduralFairing") {
-			// 	fairList:add(fair:part).
-			// }
-			// fairList[0]:getmodule("ModuleProceduralFairing"):doevent("deploy").
-			for fair in ship:modulesnamed("ModuleProceduralFairing") {
-				fair:doevent("deploy").
+	parameter cstm.
+	if cstm {
+		if not fairingD {
+			if altitude > 0.95*body:atm:height {
+				for fair in ship:partstagged("FDeploy") {
+					fair:getmodule("ModuleProceduralFairing"):doevent("deploy").
+				}
+				set fairingD to true.
 			}
-			set fairingD to true.
+		}
+	}
+	if not cstm {
+		if not fairingD {
+			//Finding fairing
+			if altitude > 0.95*body:atm:height {
+				// local fairList to list().
+				// for fair in ship:modulesnamed("ModuleProceduralFairing") {
+				// 	fairList:add(fair:part).
+				// }
+				// fairList[0]:getmodule("ModuleProceduralFairing"):doevent("deploy").
+				for fair in ship:modulesnamed("ModuleProceduralFairing") {
+					fair:doevent("deploy").
+				}
+				set fairingD to true.
+			}
 		}
 	}
 }
@@ -131,8 +144,9 @@ local function rcsAcc {
 }
 
 global function utilitiesRoutine{
+	parameter cstm.
 	when 1=1 then {
-		if not fairingD {fairingDeploy().}
+		if not fairingD {fairingDeploy(cstm).}
 		if status = "SUB_ORBITAL" or status = "FLYING" {
 			antennaDeploy().
 			solarDeploy().
@@ -152,6 +166,7 @@ global function NodeRemoveAll {
 }
 
 global function rebootInterruptionRoutine{
+	preLaunchRoutine().
 	if status = "FLYING" {
 		if DWL MSLALogMessage("/!\ MISSION COMPROMISED : CPU reboot during ascent phase. Attempt to save the mission").
 		AscentBurn().

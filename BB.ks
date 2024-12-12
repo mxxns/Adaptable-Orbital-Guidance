@@ -1,3 +1,5 @@
+runpath("UTIL.ks").
+
 local function haversine { //apparently kOS uses degrees not rads but it works with rads so i don't want to correct it
     parameter latD1, latD2, lngD1, lngD2.
     local latR1 to latD1*(constant:pi/180).
@@ -7,7 +9,7 @@ local function haversine { //apparently kOS uses degrees not rads but it works w
     return 2*body:radius*arcsin(sqrt(0.5*(1-cos(latR2-latR1)+cos(latR1)*cos(latR2)*(1-cos(lngR2-lngR1))))).
 }
 
-local BBPid to pidLoop(100, 0, 0, -10, 10).
+local BBPid to pidLoop(10*g(), 0, 0, -10, 10).
 set BBPid:setpoint to 0.
 local latBBError to 0.
 
@@ -54,12 +56,10 @@ global function boostBack {
     if addons:tr:available until addons:tr:hasimpact {
         set STR to retroBBV.
         until abs(vAng(retroBBV, ship:facing:forevector)) < 1{
-            clearscreen.
-            print abs(vAng(retroBBV, ship:facing:forevector)).
             set THR to 0.
             wait 0.1.
         }
-        set THR to 1.
+        set THR to 0.8.
         wait 0.1.
     }
     

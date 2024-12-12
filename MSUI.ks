@@ -19,7 +19,7 @@ global function UI{
 	parameter msgL2.
 	parameter msgL3.
 	parameter param3.
-    clearScreen.
+    clearscreen.
     print("___________________________________________").
     print("|                  MoonSys                |").
     print("| Your vehicle is guided to circular orbit|").

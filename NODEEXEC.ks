@@ -38,7 +38,7 @@ global function Idle {
 	unlock throttle. unlock steering.
 	set STR to prograde.
 	set THR to 0.
-	sas on. set sasmode to "radialin".
+	sas on. set sasmode to "prograde".
 	if status = "ORBITING" {
 		until not idl {
 			if not instSent {
