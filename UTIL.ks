@@ -43,7 +43,7 @@ global function boosterJettisonInterruptRoutine{ //Activates when the boosters a
 }
 
 global function stagingInterruptionRoutine{ //Activates when the whole stage is to be thrown
-	when STAGE:DELTAV:VACUUM <= 0 and stageable then {
+	when STAGE:DELTAV:VACUUM <= 0 and MAXTHRUST <= 0 and stageable then {
 		UI("Staging", "", "", "").
 		if DWL MSLALogMessage("Staging").
 

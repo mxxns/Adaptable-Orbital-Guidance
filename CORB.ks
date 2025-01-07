@@ -38,7 +38,7 @@ global function Launch { //Initialisation and launch. As the name suggests
 		stage. set THR to 1.
 		
 		boosterJettisonInterruptRoutine().
-		stagingInterruptionRoutine().
+		stagingInterruptionRoutine().	
 		if doWeUtil utilitiesRoutine(CustomFairing).
 
 		Ascent().
